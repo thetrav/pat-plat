@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="400" height="25" tilewidth="18" tileheight="18" infinite="0" nextlayerid="4" nextobjectid="3">
+ <tileset firstgid="1" source="tiles.tsx"/>
+ <tileset firstgid="181" source="tiles.tsx"/>
+ <layer id="1" name="ground" width="400" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt3EtOwzAUhWGrwAYA8RoyACTmDIBSxgyBLfDYQoEt8Fgytmgl4yap49i+sfV/0hlVqpzU8UliqUoBANDfgfQAAABF+pAeAACgSPQHACAE/QEACEF/AABC0B8AgBD0BwAgBP0BAAhBfwAAQtAfAIAQ9AcAX9s6O1Z2ZYcDYfQHAF8nOqdWzmSHA2H0BwBf9Ads9AfQ7EZnZuVWdDTjcKlzZeVadjhV2tPZj5iU/5FLf8iY6Gw42RQdEVxvOu9WuFaQmumOI/V/3g3NoUrXI7mvCbdb+f94jBX9gZxSdIfbI7HX25zXRNP5SXFMSK/vM3aJv7Hpjy2d70V+ZIeDCtnXUcrucJ9FYl2Xufqjq1vpkPK49+brUtq9u9n7MPO1tHEjnxj7FDk6I+W7LbePUmXdeYo5jpBzEXvPqvb0nfcx1+FnnQedx4bP7hefvXhk1pHl8dEfaFsbpNf+lM8lvpEed6osj8/sSV84mTSch5rmwhhj5qfPmt6WV/XHdIfPmt73+ahr3HavpOpj+55nqnM8MFPr+0q4N+rq8pBI3iuROmLWmbuWxFpfSJ4s+6fpndKTWlXa72sf01y1z1vfzAs+F4SMIfRHnXH741OtKu33tY/pS+d8YOy9/tLOBSFjCP1RZ3zehUmPsW9S7rMw1wnpH/qDlJKh+0Nd4f09SZVfjOrssA==
+  </data>
+ </layer>
+ <layer id="2" name="decor" width="400" height="25">
+  <data encoding="base64" compression="zlib">
+   eJzt2k1qwkAUAGBzAH+QnqBddO0PFLq34DVKr1D1CooH9QziwlmVGBIlpmFG833wyCRhkhfIvCFDej0AAAAAAAAAAAAAAAAAAAAAAAAAAOCRzbPYGQBc11enknGInUDivmMnQGfNssstpOYUO4HEbWMnAB12rGiTBvPHdb+xE4AOG2TlbdJg/qi2DrEKsQnxE2IfNx1I2uRGfS87f6vPa1be/q+c8orrhMW+ddcR69z7mbx19LnLtPn9MQzRDzG6cx/aNFUHuMOH9+bPruXrLxvuA+QtKur3l7oOAAAAPJkX6x0krOp/vDrH/dMHzY3DOPosxLuxBdDYGaDBEZA=
+  </data>
+ </layer>
+ <objectgroup id="3" name="interaction">
+  <object id="1" name="player1" type="player_spawn" x="52" y="317">
+   <point/>
+  </object>
+ </objectgroup>
+</map>
