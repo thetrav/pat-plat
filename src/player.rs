@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
 
-use crate::{spritesheet::{CharacterAtlas, spawn_sprite}, TILE_SIZE};
+use crate::{
+    spritesheet::{CharacterAtlas, spawn_sprite}, 
+    TILE_SIZE, 
+    movement::{Accelleration, Velocity}};
 
 pub struct PlayerPlugin;
 
@@ -22,7 +25,7 @@ impl Plugin for PlayerPlugin {
             .add_system(gamepad_connections.label("gamepads"))
             .add_system(keyboard_input.label("input"))
             .add_system(gamepad_input.label("input").after("gamepads"))
-            .add_system(player_movement.label("movement").after("input"))
+            .add_system(player_movement.label("player-movement").after("input").before("movement"))
             .add_system(camera_follow.after("movement"));
     }
 }
@@ -90,21 +93,22 @@ fn gamepad_input(
 }
 
 fn player_movement(
-    mut player_query: Query<(&Player, &mut Transform)>,
-    time: Res<Time>
+    mut player_query: Query<(&Player, &mut Accelleration)>
 ) {
-    let (player, mut transform) = player_query.single_mut();
+    let (player, mut accel) = player_query.single_mut();
     if player.up {
-        transform.translation.y += player.speed * TILE_SIZE * time.delta_seconds();
-    }
-    if player.down {
-        transform.translation.y -= player.speed * TILE_SIZE * time.delta_seconds();
+        accel.value.y = player.speed * TILE_SIZE;
+    } else if player.down {
+        accel.value.y = -player.speed * TILE_SIZE;
+    } else {
+        accel.value.y = 0.;
     }
     if player.left {
-        transform.translation.x -= player.speed * TILE_SIZE * time.delta_seconds();
-    }
-    if player.right {
-        transform.translation.x += player.speed * TILE_SIZE * time.delta_seconds();
+        accel.value.x = -player.speed * TILE_SIZE;
+    } else if player.right {
+        accel.value.x = player.speed * TILE_SIZE;
+    } else {
+        accel.value.x = 0.;
     }
 }
 
@@ -153,5 +157,7 @@ fn spawn_player(mut commands: Commands, atlas: Res<CharacterAtlas>) {
     
     commands.entity(player)
         .insert(Name::new("Player"))
-        .insert(Player{speed: 10.0, ..Default::default()}).id();
+        .insert(Velocity::new())
+        .insert(Accelleration::new())
+        .insert(Player{speed: 100.0, ..Default::default()}).id();
 }

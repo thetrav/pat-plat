@@ -9,11 +9,13 @@ mod player;
 mod debug;
 mod spritesheet;
 mod tilemap;
+mod movement;
 
 use player::PlayerPlugin;
 use debug::DebugPlugin;
 use spritesheet::SpriteSheetPlugin;
 use tilemap::TileMapPlugin;
+use movement::PhysicsMovementPlugin;
 
 fn main() {
     let height = 700.0;
@@ -32,6 +34,7 @@ fn main() {
         .add_plugin(SpriteSheetPlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(TileMapPlugin)
+        .add_plugin(PhysicsMovementPlugin)
         .add_plugin(DebugPlugin)
         .add_system(bevy::input::system::exit_on_esc_system)
         .run();
