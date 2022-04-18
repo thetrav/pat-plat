@@ -2,9 +2,9 @@ use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
 
 use crate::{
-    spritesheet::{CharacterAtlas, spawn_sprite}, 
+    spritesheet::{CharacterAtlas, spawn_sprite, CHARACTER_TILE_SIZE}, 
     TILE_SIZE, 
-    movement::{Accelleration, Velocity}};
+    movement::{Accelleration, Velocity}, collisions::Collidable};
 
 pub struct PlayerPlugin;
 
@@ -159,5 +159,6 @@ fn spawn_player(mut commands: Commands, atlas: Res<CharacterAtlas>) {
         .insert(Name::new("Player"))
         .insert(Velocity::new())
         .insert(Accelleration::new())
+        .insert(Collidable{radius: CHARACTER_TILE_SIZE / 2.})
         .insert(Player{speed: 100.0, ..Default::default()}).id();
 }

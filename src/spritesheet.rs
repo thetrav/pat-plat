@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::TILE_SIZE;
+pub const CHARACTER_TILE_SIZE: f32 = 24.;
 
 pub struct SpriteSheetPlugin;
 
@@ -43,8 +43,7 @@ pub(crate) fn spawn_sprite<T>(
     index: usize,
     translation: Vec3
 ) -> Entity where T: AtlasBox {
-    let mut sprite = TextureAtlasSprite::new(index);
-    sprite.custom_size = Some(Vec2::splat(TILE_SIZE));
+    let sprite = TextureAtlasSprite::new(index);
     let texture_atlas = atlas_box.atlas();
     return commands.spawn_bundle(SpriteSheetBundle {
         texture_atlas,
@@ -87,7 +86,7 @@ fn load_sprite_sheets(
     let image:Handle<Image> = assets.load("characters.png");
     let atlas = TextureAtlas::from_grid_with_padding(
         image,
-        Vec2::splat(24.),
+        Vec2::splat(CHARACTER_TILE_SIZE),
         9,
         3,
         Vec2::splat(1.)

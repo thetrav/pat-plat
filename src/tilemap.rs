@@ -30,6 +30,18 @@ struct SpriteParams {
     name: String
 }
 
+#[derive(Component)]
+pub struct TileGrid {
+    coords: Vec<Vec2>
+}
+
+impl TileGrid {
+
+    pub fn in_radius(&self, c: Vec2, r: f32)-> bool {
+        return self.coords.iter().any(|&i| i.distance(c) < r+ (TILE_SIZE/2.))
+    }
+}
+
 impl Plugin for TileMapPlugin {
     fn build(&self, app: &mut App) {
         app
@@ -62,6 +74,7 @@ fn load_tilemap(
                         ..Default::default()
                     })
                     .insert(GlobalTransform::default()).id();
+                let mut coords = Vec::new();
                 for params in sprite_params {
                     let sprite = spawn_sprite(
                         &mut commands, 
@@ -73,7 +86,9 @@ fn load_tilemap(
                         .insert(Name::new(params.name))
                         .id();
                     commands.entity(layer_entity).add_child(named_sprite);
+                    coords.push(Vec2::new(params.offset.x, params.offset.y));
                 }
+                commands.entity(layer_entity).insert(TileGrid{coords});
                 commands.entity(map_entity).add_child(layer_entity);
             },
             LoadedLayer::ObjectLayer(name, offset, objects) => {

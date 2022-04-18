@@ -80,7 +80,9 @@ fn physics_movement(
     }
     velocity.value.x = constrain(velocity.value.x, universe.speed_of_light);
     velocity.value.y = constrain(velocity.value.y, universe.speed_of_light);
+    
     let shift = velocity.value * seconds;
+
     position.translation += shift.extend(0.);
   }
 }
