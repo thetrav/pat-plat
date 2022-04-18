@@ -25,7 +25,7 @@ fn collisions(
   for (mut position, velocity, collidable) in collidables.iter_mut() {
     let c = Vec2::new(position.translation.x, position.translation.y);
     for (grid, name) in tile_maps.iter() {
-      // println!("consiering {:?}", name);
+      //TODO: sample neighborhood, draw lines, test against lines and implement slide
       if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
         position.translation -= velocity.value.extend(0.) * time.delta_seconds();
       }
