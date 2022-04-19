@@ -43,7 +43,6 @@ fn main() {
         .run();
 }
 
-
 fn spawn_camera(mut commands: Commands) {
     let mut camera = OrthographicCameraBundle::new_2d();
 
@@ -57,5 +56,3 @@ fn spawn_camera(mut commands: Commands) {
 
     commands.spawn_bundle(camera);
 }
-
-
