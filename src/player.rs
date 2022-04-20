@@ -96,20 +96,23 @@ fn player_movement(
     mut player_query: Query<(&Player, &mut Accelleration)>
 ) {
     let (player, mut accel) = player_query.single_mut();
+    let mut player_accel = accel.get_force("PLAYER_ACCEL");
     if player.up {
-        accel.value.y = player.speed * TILE_SIZE;
+        player_accel.y = player.speed * TILE_SIZE;
     } else if player.down {
-        accel.value.y = -player.speed * TILE_SIZE;
+        player_accel.y = -player.speed * TILE_SIZE;
     } else {
-        accel.value.y = 0.;
+        player_accel.y = 0.;
     }
+
     if player.left {
-        accel.value.x = -player.speed * TILE_SIZE;
+        player_accel.x = -player.speed * TILE_SIZE;
     } else if player.right {
-        accel.value.x = player.speed * TILE_SIZE;
+        player_accel.x = player.speed * TILE_SIZE;
     } else {
-        accel.value.x = 0.;
+        player_accel.x = 0.;
     }
+    accel.set_force("PLAYER_ACCEL", player_accel);
 }
 
 /// Simple resource to store the ID of the connected gamepad.

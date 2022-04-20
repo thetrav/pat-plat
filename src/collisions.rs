@@ -1,14 +1,14 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::Inspectable;
 
-use crate::{movement::Velocity, tilemap::TileGrid};
+use crate::{movement::{Velocity, Accelleration}, tilemap::TileGrid};
 
 pub struct CollisionsPlugin;
 
 impl Plugin for CollisionsPlugin {
   fn build(&self, app:&mut App) {
       app
-        .add_system(collisions.label("collisions").after("movement"));
+        .add_system(collisions.label("collisions").after("velocity").before("movement"));
   }
 }
 
@@ -18,16 +18,31 @@ pub struct Collidable {
 }
 
 fn collisions(
-  mut collidables: Query<(&mut Transform, &mut Velocity, &Collidable)>,
+  mut collidables: Query<(&Transform, &mut Velocity, &mut Accelleration, &Collidable)>,
   tile_maps: Query<(&TileGrid, &Name)>,
   time: Res<Time>
 ) {
-  for (mut position, velocity, collidable) in collidables.iter_mut() {
-    let c = Vec2::new(position.translation.x, position.translation.y);
-    for (grid, name) in tile_maps.iter() {
-      //TODO: sample neighborhood, draw lines, test against lines and implement slide
-      if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
-        position.translation -= velocity.value.extend(0.) * time.delta_seconds();
+  for (position, mut velocity, mut accel, collidable) in collidables.iter_mut() {
+    let mut shift = velocity.value * time.delta_seconds();
+    //y collisions
+    if velocity.value.y != 0. {
+      let c = Vec2::new(position.translation.x, position.translation.y + shift.y);
+      for (grid, name) in tile_maps.iter() {
+        if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
+          velocity.value.y = -velocity.value.y;
+          accel.clear_y();
+        }
+      }
+    }
+    shift = velocity.value * time.delta_seconds();
+    //x collisions
+    if velocity.value.x != 0. {
+      let c = Vec2::new(position.translation.x + shift.x, position.translation.y);
+      for (grid, name) in tile_maps.iter() {
+        if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
+          velocity.value.x = 0.;
+          accel.clear_x();
+        }
       }
     }
   }
