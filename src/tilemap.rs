@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use tiled::*;
 use bevy::render::color::Color;
 
-use crate::{spritesheet::{TileAtlas, spawn_sprite}, TILE_SIZE};
+use crate::{spritesheet::{TileAtlas, spawn_sprite}, TILE_SIZE, geometry::{AxisAlignedBoundingBox, Line, LineHit}};
 
 pub struct TileMapPlugin;
 
@@ -35,10 +35,28 @@ pub struct TileGrid {
     coords: Vec<Vec2>
 }
 
+fn snap_f(f: f32, s: f32) -> f32 {
+    (f / s).round() * s
+}
+
+fn snap_vector(v: Vec2, s: f32) -> Vec2 {
+    Vec2::new(snap_f(v.x, s), snap_f(v.y, s))
+}
+
 impl TileGrid {
 
-    pub fn in_radius(&self, c: Vec2, r: f32)-> bool {
-        return self.coords.iter().any(|&i| i.distance(c) < r+ (TILE_SIZE/2.))
+    pub fn cast_axis_ray(&self, origin: Vec2, vector: Vec2) -> Option<LineHit> {
+        //dodgy hack, assume we're never going to shift more than one tile at a time due to speed of light constraints
+        let pos = snap_vector(origin + vector, TILE_SIZE);
+
+        let tile = self.coords.iter().find(|&i| i.eq(&pos));
+        // if tile.is_some() {
+        //     println!("Tile at: {}\n\torigin {}\n\tvector {}", pos, origin, vector);
+        // } else {
+        //     println!("no tile at: {}\n\torigin {}\n\tvector {}", pos, origin, vector);
+        // }
+
+        return tile.and_then(|c| AxisAlignedBoundingBox::new(*c, Vec2::splat(TILE_SIZE)).intersection(Line::new(origin, vector)));
     }
 }
 

@@ -14,7 +14,56 @@ impl Plugin for CollisionsPlugin {
 
 #[derive(Component, Inspectable)]
 pub struct Collidable {
-  pub radius: f32
+  pub size: f32
+}
+
+enum Direction {
+  Up,
+  Down,
+  Left, 
+  Right,
+  Still
+}
+
+fn vec_direction(v: Vec2) -> Direction {
+  if v.x == 0. && v.y < 0. {
+    Direction::Down
+  } else if v.x == 0. && v.y > 0. {
+    Direction::Up
+  } else if v.y == 0. && v.x < 0. {
+    Direction::Left
+  } else if v.y == 0. && v.x > 0. {
+    Direction::Right
+  } else {
+    Direction::Still
+  }
+}
+
+fn ray_origins(center: Vec3, size: f32, motion: Vec2) -> Vec<Vec2> {
+  let dir = vec_direction(motion);
+  let hs = size/2.;
+  let cx = center.x;
+  let cy = center.y;
+  match dir {
+    Direction::Up => vec![
+      Vec2::new(cx-hs, cy+hs),
+      Vec2::new(cx+hs, cy+hs),
+    ],
+    Direction::Down => vec![
+      Vec2::new(cx-hs, cy-hs),
+      Vec2::new(cx+hs, cy-hs),
+    ],
+    Direction::Left => vec![
+      Vec2::new(cx-hs, cy+hs),
+      Vec2::new(cx-hs, cy-hs),
+    ],
+    Direction::Right => vec![
+      Vec2::new(cx+hs, cy+hs),
+      Vec2::new(cx+hs, cy-hs),
+    ],
+    Direction::Still => vec![],
+
+  }
 }
 
 fn collisions(
@@ -23,25 +72,37 @@ fn collisions(
   time: Res<Time>
 ) {
   for (position, mut velocity, mut accel, collidable) in collidables.iter_mut() {
-    let mut shift = velocity.value * time.delta_seconds();
-    //y collisions
-    if velocity.value.y != 0. {
-      let c = Vec2::new(position.translation.x, position.translation.y + shift.y);
-      for (grid, name) in tile_maps.iter() {
-        if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
-          velocity.value.y = -velocity.value.y;
-          accel.clear_y();
+    let p = position.translation;
+    let ds = time.delta_seconds();
+    for (grid, name) in tile_maps.iter() {
+      if name.starts_with("ground") {
+        //y collisions
+        if velocity.value.y != 0. {
+          for ray_origin in ray_origins(p, collidable.size, Vec2::new(0., velocity.value.y)) {
+            let hit = grid.cast_axis_ray(ray_origin, Vec2::new(0., velocity.value.y * ds));
+            match hit {
+              Some(_v) => {
+                //TODO: calculate distance to actual intersection then subtract that from the velocity
+                velocity.value.y = 0.;
+                accel.clear_y();
+              },
+              None => {}
+            }
+          }
         }
-      }
-    }
-    shift = velocity.value * time.delta_seconds();
-    //x collisions
-    if velocity.value.x != 0. {
-      let c = Vec2::new(position.translation.x + shift.x, position.translation.y);
-      for (grid, name) in tile_maps.iter() {
-        if name.starts_with("ground") && grid.in_radius(c, collidable.radius) {
-          velocity.value.x = 0.;
-          accel.clear_x();
+     
+        if velocity.value.x != 0. {
+          for ray_origin in ray_origins(p, collidable.size, Vec2::new(velocity.value.x * ds, 0.)) {
+            let hit = grid.cast_axis_ray(ray_origin, Vec2::new(velocity.value.x * ds, 0.));
+            match hit {
+              Some(_v) => {
+                //TODO: calculate distance to actual intersection then subtract that from the velocity
+                velocity.value.x = 0.;
+                accel.clear_x();
+              },
+              None => {}
+            }
+          }
         }
       }
     }

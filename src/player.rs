@@ -162,6 +162,6 @@ fn spawn_player(mut commands: Commands, atlas: Res<CharacterAtlas>) {
         .insert(Name::new("Player"))
         .insert(Velocity::new())
         .insert(Accelleration::new())
-        .insert(Collidable{radius: CHARACTER_TILE_SIZE / 2.})
+        .insert(Collidable{size: CHARACTER_TILE_SIZE})
         .insert(Player{speed: 100.0, ..Default::default()}).id();
 }

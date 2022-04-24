@@ -11,6 +11,7 @@ mod spritesheet;
 mod tilemap;
 mod movement;
 mod collisions;
+mod geometry;
 
 use player::PlayerPlugin;
 use debug::DebugPlugin;
